@@ -1,3 +1,7 @@
+dictionary.c
+dictionary.h
+mqtt2canopen
+
 # Object files
 *.o
 *.ko
