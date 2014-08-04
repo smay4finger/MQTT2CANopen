@@ -21,7 +21,7 @@ OBJECTS += $(CANFESTIVAL_LIB)
 CANFESTIVAL_TARGET_LIB = $(CANFESTIVAL)/drivers/$(CANFESTIVAL_TARGET)/libcanfestival_$(CANFESTIVAL_TARGET).a
 OBJECTS += $(CANFESTIVAL_TARGET_LIB)
 
-LDLIBS += -lpthread -lrt
+LDLIBS += -lpthread -lrt -lmosquitto
 
 ifeq ($(CANFESTIVAL_DYNAMIC_LOAD),true)
   LDLIBS += -ldl
@@ -46,7 +46,7 @@ clean:
 	$(RM) $(TARGET) $(OBJECTS)
 	$(RM) dictionary.c dictionary.h
 	$(MAKE) -C $(CANFESTIVAL) clean
-.PHONY: all clean
+.PHONY: all clean objedit
 
 
 dictionary.c dictionary.h: $(TARGET:=.od)
@@ -57,5 +57,8 @@ $(CANFESTIVAL_LIB) $(CANFESTIVAL_TARGET_LIB): canfestival
 canfestival: $(CANFESTIVAL)
 	( cd $(CANFESTIVAL) ; ./configure $(CANFESTIVAL_CONFIGURE) )
 	$(MAKE) -C $(CANFESTIVAL) canfestival
+
+objedit: $(TARGET:=.od)
+	$(CANFESTIVAL)/objdictgen/objdictedit.py $<
 
 mqtt2canopen.c: dictionary.h
