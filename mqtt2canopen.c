@@ -205,7 +205,19 @@ void InitNodes(CO_Data* d, UNS32 id)
 {
     printf("InitNodes(d=%p, id=%d)\n", d, id);
 
-    RegisterSetODentryCallBack(&mqtt2canopen_Data, 0x2001, 0, &mapUpdate);
+    /* register callbacks for manufacturer specific variables */
+    int wIndex;
+    for ( wIndex = 0x2000; wIndex < 0x6000; wIndex++ ) {
+        UNS32 errorCode;
+        ODCallback_t* callbacks;
+        indextable* odentry = mqtt2canopen_scanIndexOD(wIndex, &errorCode, &callbacks);
+        if (errorCode == OD_SUCCESSFUL && callbacks) {
+            int subindex;
+            for ( subindex = 0; subindex < odentry->bSubCount; subindex++ ) {
+                callbacks[subindex] = mapUpdate;
+            }
+        }
+    }
 
     setNodeId(&mqtt2canopen_Data, nodeid);
     setState(&mqtt2canopen_Data, Initialisation);
