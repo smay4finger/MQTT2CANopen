@@ -27,9 +27,16 @@ s_BOARD board = { "can0", "20k" };
 void mqtt_connect_callback(struct mosquitto *mosq, void *userdata, int result)
 {
 userdata = userdata; /* unused */
+    printf("----- mqtt_connect_callback(mosq=%p, userdata=%p, result=%d)\n",
+        mosq,
+        userdata,
+        result);
     if ( !result ) {
         char topic[2048];
-        snprintf(topic, sizeof(topic), "%s/+", mqtt_topic_prefix);
+        snprintf(topic, sizeof(topic), "%s/%s/node%d/#", 
+            mqtt_topic_prefix,
+            board.busname,
+            nodeid);
         mosquitto_subscribe(mosq, NULL, topic, 0);
     }
 }
@@ -38,6 +45,11 @@ void mqtt_message_callback(struct mosquitto *mosq, void *userdata, const struct 
 {
 mosq = mosq; /* unused */
 userdata = userdata; /* unused */
+    printf("----- mqtt_message_callback(mosq=%p, userdata=%p, message=[topic=%s, payload=%s])\n",
+        mosq,
+        userdata,
+        message->topic,
+        message->payload);
 }
 
 void mqtt_publish_nodestate(char* state)
@@ -192,6 +204,18 @@ void post_sync(CO_Data* d)
     printf("----- post_sync(d=%p)\n", d);
 }
 
+void post_emcy(CO_Data* d, UNS8 nodeID, UNS16 errCode, UNS8 errReg)
+{
+    printf("----- storeODSubIndex(d=%p, nodeID=%d, errCode=0x%04x, errReg=0x%02x)\n",
+        d, nodeID, errCode, errReg);
+}
+
+void storeODSubIndex(CO_Data* d, UNS16 wIndex, UNS8 bSubindex)
+{
+    printf("----- storeODSubIndex(d=%p, wIndex=0x%04x, bSubindex=%d)\n",
+        d, wIndex, bSubindex);
+}
+
 /****************************************************************************/
 
 void catch_signal(int sig)
@@ -322,6 +346,8 @@ int main(int argc, char** argv)
     mqtt2canopen_Data.post_SlaveStateChange = post_SlaveStateChange;
     mqtt2canopen_Data.post_TPDO             = post_TPDO;
     mqtt2canopen_Data.post_sync             = post_sync;
+    mqtt2canopen_Data.post_emcy             = post_emcy;
+    mqtt2canopen_Data.storeODSubIndex       = storeODSubIndex;
 
     StartTimerLoop(&InitNodes);
 
