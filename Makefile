@@ -12,7 +12,7 @@ INCLUDES=-Icolib/include -I.
 LDLIBS=-Lcolib/lib -lCANopenlib$(LIBEXT)_$(shell $(CC) -dumpmachine) -lrt -lmosquitto 
 
 
-CFLAGS += -W -Wall -Wstrict-prototypes -O2 $(INCLUDES)
+CFLAGS += -W -Wall -Wstrict-prototypes -O2 $(INCLUDES) -g
 
 all: $(TARGET)
 $(TARGET): $(OBJECTS)
