@@ -1,6 +1,8 @@
 dictionary.c
 dictionary.h
 mqtt2canopen
+colib/include/*.h
+colib/lib/*.a
 
 # Object files
 *.o
