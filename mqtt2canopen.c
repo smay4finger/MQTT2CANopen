@@ -5,8 +5,6 @@
 #include <sys/time.h>
 #include <sys/resource.h>
 
-#include "dictionary.h"
-
 #include <co_canopen.h>
 
 void catch_signal(int sig)

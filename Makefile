@@ -1,5 +1,5 @@
 TARGET=mqtt2canopen
-OBJECTS=mqtt2canopen.o dictionary.o
+OBJECTS=mqtt2canopen.o
 DRV=socketcan
 
 ifeq ($(DRV), socketcan)
