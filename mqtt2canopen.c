@@ -12,6 +12,8 @@ void catch_signal(int sig)
 (void)sig; /* unused */
 }
 
+#define CO_TIMER_INTERVAL 5000
+
 const CO_OD_ASSIGN_T od_assign[] = {
     { 0x1000, 1, 0, CO_ODTYPE_VAR, 0 },
     { 0x1001, 1, 0, CO_ODTYPE_VAR, 1 },
@@ -113,7 +115,7 @@ int main(int argc, char** argv)
         &od_data_variables);
     printf("initialised object dictionary\n");
     
-    coTimerInit(5000);
+    coTimerInit(CO_TIMER_INTERVAL);
     printf("initialised timer\n");
 
     coLedInit();
@@ -142,6 +144,23 @@ int main(int argc, char** argv)
         exit(EXIT_FAILURE);
     }
     printf("initialised NMT\n");
+
+    if ( (ret = codrvTimerSetup(CO_TIMER_INTERVAL)) != RET_OK ) {
+        fprintf(stderr, "error setting up CANopen timer (%d)\n", ret);
+        return ret;
+    }
+    printf("setup CANopen timer\n");
+
+    if ( (ret = codrvCanEnable()) != RET_OK ) {
+        fprintf(stderr, "error enabling CAN driver (%d)\n", ret);
+        return ret;
+    }
+    printf("enabled CAN driver\n");
+
+    for (;;) {
+        usleep(1000);
+        coCommTask();
+    }
 
     return 0;
 }
