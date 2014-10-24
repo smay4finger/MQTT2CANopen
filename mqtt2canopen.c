@@ -23,7 +23,7 @@ const CO_OBJECT_DESC_T od_description[] = {
         CO_DTYPE_U32_VAR,                               /* dType */
         0,                                              /* tableIdx */
         CO_ATTR_NUM | CO_ATTR_READ | CO_ATTR_DEFVAL,    /* attr */
-        10,                                             /* defValIdx */
+        0,                                              /* defValIdx */
         0,                                              /* limitMinIdx */
         0                                               /* limitMaxIdx */
     },
@@ -38,14 +38,22 @@ const CO_OBJECT_DESC_T od_description[] = {
     },
 };
 
+const UNSIGNED32 odConst_u32[] = {
+    0x301,
+};
+
+UNSIGNED32 odVar_u32[] = {
+    0,
+};
+
 CO_CONST CO_OD_DATA_VARIABLES_T od_data_variables = {
     NULL, /* odConst_u8 */
     NULL, /* odConst_u16 */
-    NULL, /* odConst_u32 */
+    odConst_u32, /* odConst_u32 */
     NULL, /* odConst_r32 */
     NULL, /* odVar_u8 */
     NULL, /* odVar_u16 */
-    NULL, /* odVar_u32 */
+    odVar_u32, /* odVar_u32 */
     NULL, /* odVar_r32 */
     NULL, /* odConst_i8 */
     NULL, /* odConst_i16 */
