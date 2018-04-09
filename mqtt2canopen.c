@@ -49,7 +49,7 @@ userdata = userdata; /* unused */
         mosq,
         userdata,
         message->topic,
-        message->payload);
+        (char*)message->payload);
 }
 
 void mqtt_publish_nodestate(char* state)
@@ -204,16 +204,19 @@ void post_sync(CO_Data* d)
     printf("----- post_sync(d=%p)\n", d);
 }
 
-void post_emcy(CO_Data* d, UNS8 nodeID, UNS16 errCode, UNS8 errReg)
+void post_emcy(CO_Data* d, UNS8 nodeID, UNS16 errCode, UNS8 errReg, const UNS8 errSpec[5])
 {
-    printf("----- storeODSubIndex(d=%p, nodeID=%d, errCode=0x%04x, errReg=0x%02x)\n",
-        d, nodeID, errCode, errReg);
+    printf("----- post_emcy(d=%p, nodeID=%d, errCode=0x%04x, errReg=0x%02x) "\
+                "errSpec=[0x%02x, 0x%02x, 0x%02x, 0x%02x, 0x%02x]\n",
+        d, nodeID, errCode, errReg, 
+        errSpec[0], errSpec[1], errSpec[2], errSpec[3], errSpec[4]);
 }
 
-void storeODSubIndex(CO_Data* d, UNS16 wIndex, UNS8 bSubindex)
+UNS32 storeODSubIndex(CO_Data* d, UNS16 wIndex, UNS8 bSubindex)
 {
     printf("----- storeODSubIndex(d=%p, wIndex=0x%04x, bSubindex=%d)\n",
         d, wIndex, bSubindex);
+    return 0;
 }
 
 /****************************************************************************/
@@ -230,11 +233,12 @@ void InitNodes(CO_Data* d, UNS32 id)
     printf("InitNodes(d=%p, id=%d)\n", d, id);
 
     /* register callbacks for manufacturer specific variables */
+#if 0
     int wIndex;
     for ( wIndex = 0x2000; wIndex < 0x6000; wIndex++ ) {
         UNS32 errorCode;
         ODCallback_t* callbacks;
-        indextable* odentry = mqtt2canopen_scanIndexOD(wIndex, &errorCode, &callbacks);
+        indextable* odentry = mqtt2canopen_scanIndexOD(&mqtt2canopen_Data, wIndex, &errorCode);
         if (errorCode == OD_SUCCESSFUL && callbacks) {
             int subindex;
             for ( subindex = 0; subindex < odentry->bSubCount; subindex++ ) {
@@ -242,6 +246,7 @@ void InitNodes(CO_Data* d, UNS32 id)
             }
         }
     }
+#endif
 
     setNodeId(&mqtt2canopen_Data, nodeid);
     setState(&mqtt2canopen_Data, Initialisation);
